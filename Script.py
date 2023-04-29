@@ -1,88 +1,66 @@
-import os  # Importieren der os-Bibliothek für Dateioperationen
-import pandas as pd  # Importieren der Pandas-Bibliothek für die Datenverarbeitung
-import chardet  # Importieren der chardet-Bibliothek zur automatischen Bestimmung der Kodierung von CSV-Dateien
-import tkinter as tk  # Importieren der Tkinter-Bibliothek für GUI-Entwicklung
-from tkinter import (
-    filedialog,
-)  # Importieren des filedialog-Moduls aus Tkinter für die Arbeit mit Dateidialogen
+import os
+import pandas as pd
+import chardet
+import tkinter as tk
+from tkinter import filedialog
 
 
-def get_csv_encoding(file_path):
-    """
-    Diese Funktion gibt die Kodierung einer CSV-Datei zurück.
-    """
-    with open(
-        file_path, "rb"
-    ) as f:  # Öffnen der Datei im binären Modus, um auch Nicht-Text-Dateien zu lesen
-        result = chardet.detect(
-            f.read()
-        )  # Lesen des Dateiinhalts und Bestimmung der Kodierung durch die chardet-Bibliothek
-        return result["encoding"]  # Rückgabe der Kodierung
+# Funktion zum Extrahieren der CSV-Zeilen anhand des Schlüsselworts
+def extract_csv_rows(csv_file, keyword):
+    # Lesen der CSV-Datei in einen Pandas-Datenrahmen
+    df = pd.read_csv(
+        csv_file,
+        encoding=get_csv_encoding(csv_file),
+        on_bad_lines="skip",
+        engine="python",
+        skip_blank_lines=True,
+    )
+    # Extrahieren der Zeilen, die das angegebene Keyword enthalten
+    extracted_df = df[df.iloc[:, 0].str.contains(keyword, na=False)]
+    return extracted_df
 
 
-def merge_csv_files(input_directory, output_file):
-    csv_files = [
-        f for f in os.listdir(input_directory) if f.endswith(".csv")
-    ]  # Suchen aller CSV-Dateien im angegebenen Verzeichnis
-    combined_csv = pd.concat(
-        [
-            pd.read_csv(
-                os.path.join(input_directory, f),
-                encoding=get_csv_encoding(os.path.join(input_directory, f)),
-                on_bad_lines="skip",
-                engine="python",
-                skip_blank_lines=True,
-            )
-            for f in csv_files
-        ],
-        ignore_index=True,
-    )  # Lesen aller CSV-Dateien und Zusammenführen zu einer einzigen Datenrahmen-Datei
-    cleaned_csv = combined_csv[
-        combined_csv.iloc[:, 0].str.startswith("BEST", na=False)
-    ]  # Extrahieren der Datensätze, die mit 'BEST' beginnen
-    cleaned_csv.to_csv(
-        output_file, index=False, sep="\n", encoding="utf-8-sig"
-    )  # Schreiben der bereinigten Daten in eine CSV-Datei
-
-
-# Erstellen der Funktion zur Auswahl des Eingabeverzeichnisses über einen Dateidialog
+# Funktion zum Durchsuchen des Eingabeverzeichnisses
 def browse_input_directory():
     input_directory = filedialog.askdirectory()
     input_directory_entry.delete(0, tk.END)
     input_directory_entry.insert(0, input_directory)
 
 
-# Erstellen der Funktion zur Auswahl des Ausgabepfads über einen Dateidialog
+# Funktion zum Durchsuchen der Ausgabedatei
 def browse_output_file():
     output_file = filedialog.asksaveasfilename(defaultextension=".csv")
     output_file_entry.delete(0, tk.END)
     output_file_entry.insert(0, output_file)
 
 
-# Erstellen der Funktion zur Zusammenführung der CSV-Dateien und Bereinigung der Daten
+# Funktion zum Zusammenführen und Extrahieren der CSV-Dateien
 def merge_csv_files():
     input_directory = input_directory_entry.get()
     output_file = output_file_entry.get()
+    keyword = keyword_entry.get()  # Abrufen des Schlüsselworts aus dem Eingabefeld
 
+    # Suchen aller CSV-Dateien im angegebenen Verzeichnis
     csv_files = [f for f in os.listdir(input_directory) if f.endswith(".csv")]
 
-    combined_csv = pd.concat(
-        [
-            pd.read_csv(
-                os.path.join(input_directory, f),
-                encoding=get_csv_encoding(os.path.join(input_directory, f)),
-                on_bad_lines="skip",
-                engine="python",
-                skip_blank_lines=True,
-            )
-            for f in csv_files
-        ],
-        ignore_index=True,
-    )
+    # Initialisieren des leeren DataFrames
+    combined_df = pd.DataFrame()
 
-    cleaned_csv = combined_csv[combined_csv.iloc[:, 0].str.startswith("BEST", na=False)]
+    # Lesen jeder CSV-Datei und Zusammenführen der Zeilen, die das angegebene Keyword enthalten
+    for csv_file in csv_files:
+        csv_path = os.path.join(input_directory, csv_file)
+        extracted_df = extract_csv_rows(csv_path, keyword)
+        combined_df = pd.concat([combined_df, extracted_df])
 
-    cleaned_csv.to_csv(output_file, index=False, sep="\n", encoding="utf-8-sig")
+    # Schreiben der bereinigten Daten in eine CSV-Datei
+    combined_df.to_csv(output_file, index=False, sep="\n", encoding="utf-8-sig")
+
+
+# Funktion zum Ermitteln der Kodierung einer CSV-Datei
+def get_csv_encoding(file_path):
+    with open(file_path, "rb") as f:
+        result = chardet.detect(f.read())
+        return result["encoding"]
 
 
 # Erstellen des Hauptfensters und Festlegen des Titels
@@ -111,11 +89,18 @@ output_file_entry.grid(row=1, column=1, padx=5, pady=5)
 output_file_button = tk.Button(root, text="Durchsuchen", command=browse_output_file)
 output_file_button.grid(row=1, column=2, padx=5, pady=5)
 
-# Erstellen der Schaltfläche zum Zusammenführen der CSV-Dateien
+# Erstellen der Widgets für das Schlüsselwort
+keyword_label = tk.Label(root, text="Schlüsselwort:")
+keyword_label.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
+
+keyword_entry = tk.Entry(root, width=50)
+keyword_entry.grid(row=2, column=1, padx=5, pady=5)
+
+# Erstellen der Schaltfläche zum Zusammenführen und Extrahieren der CSV-Dateien
 merge_button = tk.Button(
-    root, text="CSV-Dateien zusammenführen", command=merge_csv_files
+    root, text="CSV-Dateien zusammenführen und extrahieren", command=merge_csv_files
 )
-merge_button.grid(row=2, column=1, padx=5, pady=5)
+merge_button.grid(row=3, column=1, padx=5, pady=5)
 
 # Starten der main loop
 root.mainloop()
