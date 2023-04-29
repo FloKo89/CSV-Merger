@@ -34,8 +34,7 @@ def merge_csv_files(input_directory, output_file):
         ignore_index=True,
     )  # Lesen aller CSV-Dateien und Zusammenführen zu einer einzigen Datenrahmen-Datei
     cleaned_csv = combined_csv[
-        combined_csv.iloc[:, 0].str.startswith("BEST", na=Fal
-                                               se)
+        combined_csv.iloc[:, 0].str.startswith("BEST", na=False)
     ]  # Extrahieren der Datensätze, die mit 'BEST' beginnen
     cleaned_csv.to_csv(
         output_file, index=False, sep="\n", encoding="utf-8-sig"
