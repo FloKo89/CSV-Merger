@@ -20,6 +20,7 @@ class CSV_Merger(tk.Tk):
         self.configure(background=background_color)
         self.eval('tk::PlaceWindow . center')
 
+
         self.input_directory_label = tk.Label(self, background=background_color, foreground=foreground_color, text="Eingabeverzeichnis:", font=("Helvetica", 12))
         self.input_directory_label.grid(row=0, column=0, padx=(15, 5), pady=(15, 5), sticky=tk.W)
 
@@ -64,11 +65,6 @@ class CSV_Merger(tk.Tk):
         self.progress_label = tk.Label(self, background=background_color, foreground=foreground_color, text="Fortschritt: 0%", font=("Helvetica", 12))
         self.progress_label.grid(row=5, column=1, padx=5, pady=5)
 
-
-
-
-
-
     # Funktion zum Extrahieren der CSV-Zeilen anhand des Schlüsselworts
     def extract_csv_rows(self, csv_file, keyword):
         # Lesen der CSV-Datei in einen Pandas-Datenrahmen
@@ -101,6 +97,12 @@ class CSV_Merger(tk.Tk):
             self.output_file_entry.delete(0, tk.END)
             self.output_file_entry.insert(0, output_file)
 
+    # Funktion zum Ermitteln der Kodierung einer CSV-Datei
+    def get_csv_encoding(self, file_path):
+        with open(file_path, "rb") as f:
+            result = chardet.detect(f.read())
+            return result["encoding"]
+
     # Funktion zum Zusammenführen und Extrahieren der CSV-Dateien
     def merge_csv_files(self):
         input_directory = self.input_directory_entry.get()
@@ -130,12 +132,6 @@ class CSV_Merger(tk.Tk):
 
         # Schreiben der bereinigten Daten in eine CSV-Datei
         combined_df.to_csv(output_file, index=False, header=False, sep=';', line_terminator='\n')
-
-    # Funktion zum Ermitteln der Kodierung einer CSV-Datei
-    def get_csv_encoding(self, file_path):
-        with open(file_path, "rb") as f:
-            result = chardet.detect(f.read())
-            return result["encoding"]
     
     # Funktion zum Aktualisieren des Status der Schaltfläche "Zusammenführen"
     def update_merge_button_state(self, *args):
@@ -158,15 +154,15 @@ class CSV_Merger(tk.Tk):
             label.pack()
             widget.tooltip_window = tooltip_window
 
-    # Funktion zum schließen des Tooltipps
+        # Funktion zum schließen des Tooltipps
         def leave(event):
             if hasattr(widget, 'tooltip_window'):
                 widget.tooltip_window.destroy()
-            
-        widget.bind("<Enter>", enter)
+        # Binden der Ereignisse "Enter" und "Leave" an das Widget    
+        widget.bind("<Enter>", enter) 
         widget.bind("<Leave>", leave)
 
-
-if __name__ == "__main__":
+# Starten der Anwendung
+if __name__ == "__main__": 
     app = CSV_Merger()
     app.mainloop()
