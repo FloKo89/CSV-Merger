@@ -81,6 +81,7 @@ def get_csv_encoding(file_path):
 
 # Erstellen des Hauptfensters und Festlegen des Titels
 root = tk.Tk()
+root.iconbitmap("icon.ico")
 root.title("CSV Merger")
 
 # Erstellen der Widgets für das Eingabeverzeichnis
