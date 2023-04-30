@@ -15,10 +15,16 @@ def extract_csv_rows(csv_file, keyword):
         on_bad_lines="skip",
         engine="python",
         skip_blank_lines=True,
+        sep=";",
+        header=None,
+        na_filter=False
     )
     # Extrahieren der Zeilen, die das angegebene Keyword enthalten
-    extracted_df = df[df.iloc[:, 0].str.contains(keyword, na=False)]
+    df = df.applymap(str)  # alle Zellen in Strings umwandeln
+    extracted_df = df[df.apply(lambda row: row.astype(str).str.contains(keyword).any(), axis=1)]
     return extracted_df
+
+
 
 
 # Funktion zum Durchsuchen des Eingabeverzeichnisses
@@ -63,7 +69,7 @@ def merge_csv_files():
         root.update_idletasks()
 
     # Schreiben der bereinigten Daten in eine CSV-Datei
-    combined_df.to_csv(output_file, index=False, sep="\n", encoding="utf-8-sig")
+    combined_df.to_csv(output_file, index=False, header=None, sep=';', line_terminator='\n')
 
 
 # Funktion zum Ermitteln der Kodierung einer CSV-Datei
