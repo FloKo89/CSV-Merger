@@ -69,7 +69,7 @@ def merge_csv_files():
         root.update_idletasks()
 
     # Schreiben der bereinigten Daten in eine CSV-Datei
-    combined_df.to_csv(output_file, index=False, header=None, sep=';', line_terminator='\n')
+    combined_df.to_csv(output_file, index=False, header=False, sep=';', line_terminator='\n')
 
 
 # Funktion zum Ermitteln der Kodierung einer CSV-Datei
