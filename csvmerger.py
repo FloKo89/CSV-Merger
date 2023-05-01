@@ -11,18 +11,18 @@ foreground_color = "#000033"  # Vordergrundfarbe des Hauptfensters
 button_color = "#4d79ff"  # Farbe der Schaltflächen
 
 
-class CsvMerger(tk.Tk):
-    def __init__(self):
-        super().__init__()
+class CsvMerger(tk.Tk): # Erstellen der Klasse CsvMerger, die von der Klasse tk.Tk erbt
+    def __init__(self): # Konstruktor der Klasse CsvMerger
+        super().__init__() # Aufruf des Konstruktors der Elternklasse
 
-        self.iconbitmap("icon.ico")
-        self.title("CSV Merger")
-        self.resizable(False, False)
-        self.columnconfigure(1, weight=1)
-        self.geometry("550x220")
-        self.configure(background=background_color)
-        self.eval('tk::PlaceWindow . center')
-
+        self.iconbitmap("icon.ico") # Festlegen des Programmsymbols
+        self.title("CSV Merger") # Festlegen des Fenstertitels
+        self.resizable(False, False) # Festlegen, dass das Fenster nicht in der Größe verändert werden kann
+        self.columnconfigure(1, weight=1) # Festlegen, dass die zweite Spalte des Hauptfensters die gesamte Breite
+        self.geometry("550x220") # Festlegen der Größe des Hauptfensters
+        self.configure(background=background_color) # Festlegen der Hintergrundfarbe des Hauptfensters
+        self.eval('tk::PlaceWindow . center') # Zentrieren des Hauptfensters auf dem Bildschirm
+# Erstellen der Benutzeroberfläche
         self.input_directory_label = tk.Label(self, background=background_color, foreground=foreground_color,
                                               text="Eingabeverzeichnis:", font=("Helvetica", 12))
         self.input_directory_label.grid(row=0, column=0, padx=(15, 5), pady=(15, 5), sticky=tk.W)
