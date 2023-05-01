@@ -1,28 +1,42 @@
-**CSV Merger**
+# CSV Merger
 
-This Python program allows you to merge multiple CSV files into a single file and extract rows that contain a specific keyword.
+CSV Merger is a Python application with a Tkinter GUI that searches through multiple CSV files in a selected directory, extracts rows containing a specified keyword, and then merges them into a single output file.
 
-**Getting Started**
-To use this program, you will need to have Python 3 installed on your computer.
+## Features
 
-You can run the program by executing the csv_merger.py file in a Python environment, such as IDLE or the command line.
+- Easy-to-use graphical interface
+- Merge multiple CSV files from a selected directory
+- Extract rows containing a specified keyword
+- Save the merged and extracted data in a single output file
+- Monitor the progress with a progress bar
 
-**Prerequisites**
+## Requirements
 
-Python 3
-Pandas
-Tkinter
+- Python 3.6 or higher
+- Tkinter
+- Pandas
+- Chardet
 
-**Usage**
+## Installation
 
-Launch the program by executing the csv_merger.py file in a Python environment.
-Click the "Browse" button next to the "Input Directory" label and select the directory containing the CSV files you want to merge.
-Click the "Browse" button next to the "Output File" label and select a file name and location for the merged file.
-Enter a keyword in the "Keyword" field to extract only the rows that contain that keyword.
-Click the "CSV-Dateien zusammenführen und extrahieren" button to merge the CSV files and extract the rows that contain the keyword.
-The progress bar will show the progress of the merging process, and the progress label will display the percentage completed.
-The merged CSV file will be saved in the location specified in step 3.
+1. Clone the repository or download the source code.
+2. Install the required packages with pip:
+   ```
+   pip install pandas chardet
+   ```
 
-**License**
+## Usage
 
-This project is licensed under the MIT License - see the LICENSE.md file for details.
+1. Run the application by executing the main Python script:
+   ```
+   python csv_merger.py
+   ```
+2. In the GUI, click the "Browse" button next to the "Input Directory" field to select the directory containing the CSV files you want to merge and extract.
+3. Click the "Browse" button next to the "Output File" field to select the file where the result should be saved.
+4. Enter the keyword that must be present in the rows you want to extract from the CSV files.
+5. Click the "Merge and Extract CSV Files" button to start the process.
+6. Monitor the progress with the progress bar and the progress label.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
